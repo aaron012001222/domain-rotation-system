@@ -1,0 +1,29 @@
+
+services:
+  # --- 前端服务 (Nginx + Vue) ---
+  frontend:
+    build: ./frontend
+    ports:
+      - "80:80" # 将您电脑的 8080 端口映射到容器的 80 端口
+    depends_on:
+      - backend
+    networks:
+      - domain-net
+
+  # --- 后端服务 (Flask + Gunicorn) ---
+  backend:
+    build: ./backend
+    volumes:
+      - backend-data:/app # [关键] 将 /app 目录(包含 app.db) 挂载到持久卷
+    networks:
+      - domain-net
+    # 注意: 我们不需要暴露 5001 端口到主机，
+    # 因为 'frontend' 服务通过内部网络 'domain-net' 访问它。
+
+# --- 数据持久化 ---
+volumes:
+  backend-data: # 命名一个卷，用于永久保存我们的 SQLite 数据库
+
+# --- 内部网络 ---
+networks:
+  domain-net: # 创建一个自定义网络

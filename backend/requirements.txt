@@ -1,0 +1,9 @@
+Flask
+Flask-SQLAlchemy
+Flask-Migrate
+Flask-Cors
+python-dotenv
+requests
+APScheduler
+gunicorn
+certifi==2024.7.4
