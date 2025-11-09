@@ -128,7 +128,17 @@ def delete_group(group_id):
     db.session.commit()
     
     return jsonify({'message': f'Group "{group.name}" deleted successfully.'})
+# backend/app.py (添加这个新函数)
 
+@app.route('/api/transit_domains/<int:domain_id>', methods=['DELETE'])
+def delete_transit_domain(domain_id):
+    """删除一个单独的中转域名"""
+    domain = TransitDomain.query.get_or_404(domain_id)
+    
+    db.session.delete(domain)
+    db.session.commit()
+    
+    return jsonify({'message': 'Transit domain deleted successfully.'})
 # --- 辅助函数 ---
 def process_and_add_domains(urls_input, group_id, DomainModel):
     """辅助函数：处理并批量添加域名到数据库"""
@@ -248,6 +258,29 @@ def trigger_check_job():
     
     return jsonify({'message': 'Health check job triggered.'})
 
+# backend/app.py (添加这三个新函数)
+
+@app.route('/api/scheduler/pause', methods=['POST'])
+def pause_scheduler():
+    """暂停自动检测任务"""
+    scheduler.pause_job('DomainCheckJob')
+    return jsonify({'message': 'Scheduler paused.'})
+
+@app.route('/api/scheduler/resume', methods=['POST'])
+def resume_scheduler():
+    """恢复自动检测任务"""
+    scheduler.resume_job('DomainCheckJob')
+    return jsonify({'message': 'Scheduler resumed.'})
+
+@app.route('/api/scheduler/status', methods=['GET'])
+def get_scheduler_status():
+    """获取自动检测任务的状态"""
+    job = scheduler.get_job('DomainCheckJob')
+    if job and job.next_run_time is not None:
+        status = 'running'
+    else:
+        status = 'paused'
+    return jsonify({'status': status, 'interval_minutes': 5}) # 间隔暂时硬编码为5
 
 # --- Main Execution ---
 # 修正：这是唯一的 `if __name__ == '__main__':` 块，并且在文件的最后

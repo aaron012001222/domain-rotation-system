@@ -67,8 +67,26 @@ export default {
         return apiClient.delete('/domains', { data: { ids: domainIds } });
     },
 
+    // 删除单个中转域名
+    deleteTransitDomain(domainId) {
+        return apiClient.delete(`/transit_domains/${domainId}`)
+    },
+
     // 手动触发检测
     triggerCheck() {
         return apiClient.post('/tasks/run_check');
     }
 }
+
+// frontend/src/api.js (添加这三个新函数)
+
+    // 暂停/恢复/获取 调度器状态
+    pauseScheduler() {
+        return apiClient.post('/scheduler/pause')
+    },
+    resumeScheduler() {
+        return apiClient.post('/scheduler/resume')
+    },
+    getSchedulerStatus() {
+        return apiClient.get('/scheduler/status')
+    },

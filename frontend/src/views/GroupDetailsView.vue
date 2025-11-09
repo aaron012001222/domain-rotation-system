@@ -26,6 +26,18 @@
       <el-table :data="transitDomains" v-loading="loadingTables" max-height="250px">
         <el-table-column prop="url" label="中转域名 URL" />
         <el-table-column prop="created_at" label="添加时间" />
+        <el-table-column label="操作" width="100" align="center">
+          <template #default="scope">
+            <el-button 
+              size="small" 
+              type="danger" 
+              @click="handleDeleteTransit(scope.row)"
+            >
+              删除
+            </el-button>
+          </template>
+        </el-table-column>
+
       </el-table>
     </el-card>
 
@@ -237,6 +249,34 @@ async function triggerManualCheck() {
 // 7. 返回仪表盘
 function goBack() {
   router.push({ name: 'dashboard' })
+}
+
+// [新] 8. 删除单个中转域名
+async function handleDeleteTransit(domain) {
+  try {
+    await ElMessageBox.confirm(
+      `确定要删除中转域名 "${domain.url}" 吗？`,
+      '警告',
+      {
+        confirmButtonText: '确定删除',
+        cancelButtonText: '取消',
+        type: 'warning',
+      }
+    )
+
+    // 用户确认
+    loadingTables.value = true
+    await api.deleteTransitDomain(domain.id)
+    ElMessage.success('中转域名删除成功！')
+    await fetchGroupDetails() // 重新加载数据
+  } catch (error) {
+    if (error !== 'cancel') {
+      console.error('删除中转域名失败:', error)
+      ElMessage.error('删除失败')
+    }
+  } finally {
+    loadingTables.value = false
+  }
 }
 
 // --- 生命周期钩子 ---
