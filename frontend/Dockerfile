@@ -26,7 +26,6 @@ RUN rm /etc/nginx/conf.d/default.conf
 # (我们将在下一步创建这个文件)
 COPY nginx.conf /etc/nginx/conf.d/
 
-COPY .htpasswd /etc/nginx/.htpasswd
 
 # 暴露 Nginx 的 80 端口
 EXPOSE 80
