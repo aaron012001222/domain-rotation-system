@@ -77,14 +77,14 @@ echo "密码文件已创建。"
 
 # 步骤 4: 构建并启动 Docker 容器
 echo -e "\n${YELLOW}步骤 4: 正在构建 Docker 镜像 (这可能需要几分钟)...${NC}"
-if ! sudo docker-compose build; then
+if ! sudo docker compose build; then
     echo -e "${RED}Docker 镜像构建失败。${NC}"
     exit 1
 fi
 
 # 步骤 5: 正在后台启动系统...
 echo -e "\n${YELLOW}步骤 5: 正在后台启动系统...${NC}"
-if ! sudo docker-compose up -d; then
+if ! sudo docker compose up -d; then
     echo -e "${RED}Docker 容器启动失败。${NC}"
     exit 1
 fi
