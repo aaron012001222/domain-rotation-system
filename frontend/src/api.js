@@ -1,23 +1,19 @@
+// frontend/src/api.js
 import axios from 'axios'
 
-// 创建一个 Axios 实例
 const apiClient = axios.create({
-    baseURL: '/api', // 关键：指向我们的 Flask 后端
-    timeout: 10000, // 10 秒超时
+    baseURL: '/api', 
+    timeout: 10000, 
     headers: {
         'Content-Type': 'application/json',
     }
 })
 
-// 导出我们将来要用的所有 API 函数
 export default {
-    
-    // 获取统计数据
     getStats() {
-        return apiClient.get('/stats')
+        return apiClient.get('/stats');
     },
 
-    // [新] 获取所有域名 (用于“所有域名”页面)
     getAllDomains(page, perPage, status, search) {
         return apiClient.get('/domains', {
             params: {
@@ -26,71 +22,64 @@ export default {
                 status,
                 search
             }
-        })
+        });
     },
 
-    // 获取所有组
     getGroups() {
-        return apiClient.get('/groups')
+        return apiClient.get('/groups');
     },
 
-    // 获取特定组的详情
     getGroupDetails(groupId) {
-        return apiClient.get(`/groups/${groupId}`)
+        return apiClient.get(`/groups/${groupId}`);
     },
 
-    // 创建新组
     createGroup(name) {
-        return apiClient.post('/groups', { name: name })
+        return apiClient.post('/groups', { name: name });
     },
 
-    // 删除组
     deleteGroup(groupId) {
-        return apiClient.delete(`/groups/${groupId}`)
+        return apiClient.delete(`/groups/${groupId}`);
     },
 
-    // 批量添加落地域名
     addLandingDomains(groupId, urls) {
-        return apiClient.post(`/groups/${groupId}/landing_domains`, { urls: urls })
+        return apiClient.post(`/groups/${groupId}/landing_domains`, { urls: urls });
     },
 
-    // 批量添加中转域名
-    addTransitDomains(groupId, urls) {
-        return apiClient.post(`/groups/${groupId}/transit_domains`, { urls: urls })
+    // --- [新] 更新：添加中转域名 ---
+    addTransitDomains(groupId, { urls, path_type, custom_path }) {
+        return apiClient.post(`/groups/${groupId}/transit_domains`, { 
+            urls, 
+            path_type, 
+            custom_path 
+        });
     },
 
-    // 批量删除落地域名
-    deleteLandingDomains(domainIds) {
-        return apiClient.delete('/domains', { data: { ids: domainIds } })
-    },
-
-    // [新] 删除单个中转域名
+    // [新] 删除中转域名
     deleteTransitDomain(domainId) {
-        return apiClient.delete(`/transit_domains/${domainId}`)
+        return apiClient.delete(`/transit_domains/${domainId}`);
     },
 
-    // 手动触发检测
+    deleteLandingDomains(domainIds) {
+        return apiClient.delete('/domains', { data: { ids: domainIds } });
+    },
+
     triggerCheck() {
-        return apiClient.post('/tasks/run_check')
+        return apiClient.post('/tasks/run_check');
     },
 
-    // [新] 暂停/恢复/获取 调度器状态
-    pauseScheduler() {
-        return apiClient.post('/scheduler/pause')
-    },
-    
-    resumeScheduler() {
-        return apiClient.post('/scheduler/resume')
-    },
-    
+    // --- [新] 调度器 API ---
     getSchedulerStatus() {
-        return apiClient.get('/scheduler/status')
+        return apiClient.get('/scheduler/status');
+    },
+    pauseScheduler() {
+        return apiClient.post('/scheduler/pause');
+    },
+    resumeScheduler() {
+        return apiClient.post('/scheduler/resume');
     },
 
-    // [新] 测试跳转
-    testRedirect(url) {
-        // [修正] 确保 API 路径正确 (例如 /api/test_redirect)
-        // 确保您的后端 app.py 中有这个路由
-        return apiClient.post('/api/test_redirect', { url: url }) 
+    // --- [新] 跳转测试 API ---
+    testRedirect(url, path) {
+        return apiClient.post('/test_redirect', { url, path });
     }
 }
