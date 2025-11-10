@@ -19,7 +19,6 @@ def check_domain_safety(url):
             'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/91.0.4472.124 Safari/537.36'
         }
         
-        # [新] 自动为没有 http/https 的 URL 添加 http://
         if not url.startswith('http://') and not url.startswith('https://'):
             url = 'http://' + url
             
@@ -70,7 +69,6 @@ def run_check_job(app):
         
         checked_transit = 0
         for domain in transit_domains_to_check:
-            # 我们检测完整的 URL (e.g., http://go1.my-domain.com/go)
             full_url = f"http://{domain.url}{domain.path}"
             new_status = check_domain_safety(full_url)
             domain.status = new_status

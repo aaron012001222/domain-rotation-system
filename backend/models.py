@@ -9,7 +9,6 @@ class DomainGroup(db.Model):
     name = db.Column(db.String(100), unique=True, nullable=False)
     created_at = db.Column(db.DateTime, default=datetime.utcnow)
     
-    # 关系定义
     transit_domains = db.relationship('TransitDomain', backref='group', lazy=True, cascade="all, delete-orphan")
     landing_domains = db.relationship('LandingDomain', backref='group', lazy=True, cascade="all, delete-orphan")
 

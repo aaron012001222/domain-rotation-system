@@ -240,6 +240,7 @@ def add_transit_domains_to_group(group_id):
     return jsonify({'message': message}), 201
 
 # --- [新] 核心跳转逻辑（动态路径） ---
+# 我们不再使用 @app.route('/go')
 @app.route('/<path:path>')
 def dynamic_redirect_to_landing(path):
     """
@@ -249,7 +250,7 @@ def dynamic_redirect_to_landing(path):
     
     # 1. [安全] 过滤掉对后台管理页面的访问
     #    (这是 Nginx 规则 1 的第二层保险)
-    admin_paths = ['api', 'assets', 'all-domains', 'group']
+    admin_paths = ['api', 'assets', 'all-domains', 'group', 'favicon.ico']
     if path == '/' or any(path.startswith(p) for p in admin_paths):
         # 如果 Nginx 配置错误，Flask 会在这里捕获并拒绝
         return "Not Found (Admin Endpoint)", 404
