@@ -313,43 +313,4 @@ def test_redirect():
     ).first()
 
     if not transit_domain:
-        return jsonify({'status': 'error', 'message': '无效的中转域名 (未在数据库中找到)'}), 404
-
-    # 2. 查找该组所有“安全”的落地域名
-    group_id = transit_domain.group_id
-    safe_landing_domains = LandingDomain.query.filter_by(
-        group_id=group_id,
-        status='safe'
-    ).all()
-
-    if not safe_landing_domains:
-        return jsonify({'status': 'error', 'message': '没有可用的“安全”落地域名'}), 404
-
-    # 3. 从健康列表中随机选择一个
-    chosen_domain = random.choice(safe_landing_domains)
-
-    # 4. 返回成功
-    return jsonify({
-        'status': 'success',
-        'landing_url': chosen_domain.url,
-        'group_name': transit_domain.group.name
-    })
-
-# --- Main Execution ---
-if __name__ == '__main__':
-    # 初始化并启动定时任务
-    scheduler.add_job(
-        id='DomainCheckJob', 
-        func=run_check_job, 
-        args=[app], 
-        trigger='interval', 
-        minutes=5 # 对应您的需求：每5分钟检测一次
-    )
-    scheduler.start()
-    
-    print("Scheduler started... running job every 5 minutes.")
-    
-    app.run(host='0.0.0.0', port=5001, debug=True, use_reloader=False)
-    # 注意: debug=True 和 use_reloader=True 可能会导致 APScheduler 运行两次。
-    # 我们设置 use_reloader=False 来避免这个问题。
-    # 在生产环境中，我们会使用 Gunicorn，则没有此问题。
+        return jsonify({'status': 'error', 'message': '无效的中转域名 (未在数据库中
