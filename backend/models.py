@@ -4,9 +4,6 @@ from datetime import datetime
 
 db = SQLAlchemy()
 
-# 辅助表，用于多对多关系 (一个组可以有多个中转，一个中转也可以在多个组... 不，我们保持简单)
-# 我们保持一对多关系：一个中转域名只属于一个组
-
 class DomainGroup(db.Model):
     id = db.Column(db.Integer, primary_key=True)
     name = db.Column(db.String(100), unique=True, nullable=False)
@@ -32,11 +29,8 @@ class TransitDomain(db.Model):
     created_at = db.Column(db.DateTime, default=datetime.utcnow)
     
     # --- [新字段] ---
-    # 路径 (例如 "/go" 或 "/aB3xZ7")
     path = db.Column(db.String(100), nullable=False, default='/go') 
-    # 健康状态
     status = db.Column(db.String(20), default='pending', nullable=False)  # pending, safe, unsafe
-    # 最后检测时间
     last_checked_at = db.Column(db.DateTime)
     
     # [新] 确保 "域名 + 路径" 的组合是唯一的

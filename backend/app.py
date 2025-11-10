@@ -240,7 +240,6 @@ def add_transit_domains_to_group(group_id):
     return jsonify({'message': message}), 201
 
 # --- [新] 核心跳转逻辑（动态路径） ---
-# 删除旧的 @app.route('/go')
 @app.route('/<path:path>')
 def dynamic_redirect_to_landing(path):
     """

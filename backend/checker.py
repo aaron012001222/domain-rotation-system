@@ -26,9 +26,6 @@ def check_domain_safety(url):
         response = requests.get(url, headers=headers, timeout=5, allow_redirects=True)
         
         if response.status_code >= 400:
-            # 对于中转链接， 404 (来自我们后端的) 也是一种 "safe"
-            # 但为了通用性，我们先将其标记为 unsafe，除非是我们自己的 404
-            # 为了简单起见，所有 400+ 都是 unsafe
             return 'unsafe' 
 
         content = response.text.lower()
