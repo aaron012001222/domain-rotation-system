@@ -21,6 +21,21 @@ db.init_app(app)
 migrate = Migrate(app, db)
 CORS(app) 
 
+# --- [!!! 关键修复 !!!] ---
+# 将调度器任务的添加和启动移到全局作用域
+# 这样 Gunicorn 才能在导入时执行它
+scheduler.add_job(
+    id='DomainCheckJob', 
+    func=run_check_job, 
+    args=[app], 
+    trigger='interval', 
+    minutes=5 
+)
+scheduler.start()
+print("Scheduler started... running job every 5 minutes.")
+# --- [!!! 修复结束 !!!] ---
+
+
 # --- [新] 辅助函数：生成随机路径 ---
 def generate_random_path(length=6):
     """生成一个 5-8 位的随机字母和数字路径"""
@@ -382,13 +397,10 @@ def test_redirect():
 
 # --- Main Execution ---
 if __name__ == '__main__':
-    scheduler.add_job(
-        id='DomainCheckJob', 
-        func=run_check_job, 
-        args=[app], 
-        trigger='interval', 
-        minutes=5 
-    )
-    scheduler.start()
-    print("Scheduler started... running job every 5 minutes.")
+    # [!!! 关键修复 !!!] ---
+    # 这一部分只在 `flask run` (开发) 时运行
+    # Gunicorn 启动时不会运行这里
+    # 我们的修复是把 add_job 和 start 移到 Gunicorn 也能加载的全局作用域
+    
+    # 我们只保留 app.run() 在这里
     app.run(host='0.0.0.0', port=5001, debug=True, use_reloader=False)
