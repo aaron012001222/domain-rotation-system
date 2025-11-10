@@ -17,7 +17,7 @@ export default {
         return apiClient.get('/stats')
     },
 
-    // [新] 获取所有域名
+    // [新] 获取所有域名 (用于“所有域名”页面)
     getAllDomains(page, perPage, status, search) {
         return apiClient.get('/domains', {
             params: {
@@ -78,15 +78,19 @@ export default {
     pauseScheduler() {
         return apiClient.post('/scheduler/pause')
     },
+    
     resumeScheduler() {
         return apiClient.post('/scheduler/resume')
     },
+    
     getSchedulerStatus() {
         return apiClient.get('/scheduler/status')
     },
 
     // [新] 测试跳转
     testRedirect(url) {
-        return apiClient.post('/api/test_redirect', { url: url })
+        // [修正] 确保 API 路径正确 (例如 /api/test_redirect)
+        // 确保您的后端 app.py 中有这个路由
+        return apiClient.post('/api/test_redirect', { url: url }) 
     }
 }
