@@ -307,7 +307,6 @@ async function handleTestRedirect() {
   // 从完整 URL 中解析出域名和路径
   let urlObj
   try {
-    // 自动为没有 http/https 的 URL 添加 http://
     let fullUrl = testUrl.value
     if (!fullUrl.startsWith('http://') && !fullUrl.startsWith('https://')) {
         fullUrl = 'http://' + fullUrl
