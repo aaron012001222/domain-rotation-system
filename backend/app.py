@@ -68,7 +68,7 @@ def get_all_domains():
             'id': d.id, 
             'url': d.url, 
             'status': d.status, 
-            'last_checked': d.last_checked_at,
+            'last_checked': d.last_checked_at.isoformat() if d.last_checked_at else None, # 修正：添加 isoformat
             'group': { 'name': d.group.name } if d.group else { 'name': 'N/A' }
         })
 
@@ -257,7 +257,7 @@ def trigger_check_job():
     Thread(target=run_check_job, args=[app]).start()
     return jsonify({'message': 'Health check job triggered.'})
 
-# --- 新增：删除中转域名 API ---
+# --- [新] 新增：删除中转域名 API ---
 @app.route('/api/transit_domains/<int:domain_id>', methods=['DELETE'])
 def delete_transit_domain(domain_id):
     """删除单个中转域名"""
@@ -266,7 +266,7 @@ def delete_transit_domain(domain_id):
     db.session.commit()
     return jsonify({'message': 'Transit domain deleted successfully.'})
 
-# --- 新增：调度器控制 API ---
+# --- [新] 新增：调度器控制 API ---
 @app.route('/api/scheduler/pause', methods=['POST'])
 def pause_scheduler():
     """暂停自动检测任务"""
@@ -291,7 +291,7 @@ def get_scheduler_status():
     else:
         return jsonify({'status': 'running', 'next_run': job.next_run_time.isoformat()})
 
-# --- 新增：跳转测试 API ---
+# --- [新] 新增：跳转测试 API ---
 @app.route('/api/test_redirect', methods=['POST'])
 def test_redirect():
     """
