@@ -1,4 +1,3 @@
-# backend/models.py
 from flask_sqlalchemy import SQLAlchemy
 from datetime import datetime
 
@@ -13,13 +12,14 @@ class DomainGroup(db.Model):
     transit_domains = db.relationship('TransitDomain', backref='group', lazy=True, cascade="all, delete-orphan")
     landing_domains = db.relationship('LandingDomain', backref='group', lazy=True, cascade="all, delete-orphan")
 
+    # [新] 辅助函数，用于 API
     def to_dict(self):
         return {
             'id': self.id,
             'name': self.name,
             'created_at': self.created_at.isoformat(),
-            'transit_domains_count': len(self.transit_domains),
-            'landing_domains_count': len(self.landing_domains)
+            'transit_domains_count': len(self.transit_domains), # 新 UI 需要这个
+            'landing_domains_count': len(self.landing_domains) # 新 UI 需要这个
         }
 
 class TransitDomain(db.Model):
@@ -28,6 +28,7 @@ class TransitDomain(db.Model):
     group_id = db.Column(db.Integer, db.ForeignKey('domain_group.id'), nullable=False)
     created_at = db.Column(db.DateTime, default=datetime.utcnow)
 
+    # [新] 辅助函数，用于 API
     def to_dict(self):
         return {
             'id': self.id,
@@ -44,6 +45,7 @@ class LandingDomain(db.Model):
     last_checked_at = db.Column(db.DateTime)
     created_at = db.Column(db.DateTime, default=datetime.utcnow)
 
+    # [新] 辅助函数，用于 API
     def to_dict(self):
         return {
             'id': self.id,
